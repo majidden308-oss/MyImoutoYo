@@ -529,7 +529,7 @@
             premium_menu_player_change(1)
 
     def premium_should_play_opening_op():
-        return renpy.loadable("images/op.webm") and (not renpy.session.get("premium_opening_op_seen", False))
+        return False
 
     def premium_finish_opening_op():
         renpy.session["premium_opening_op_seen"] = True
