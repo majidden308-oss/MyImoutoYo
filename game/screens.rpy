@@ -280,6 +280,7 @@ style say_label:
 
 style say_dialogue:
     properties gui.text_properties("dialogue")
+    size 26
 
     xpos gui.dialogue_xpos
     xsize gui.dialogue_width

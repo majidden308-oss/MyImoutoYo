@@ -56,6 +56,7 @@ transform dream_whiteout:
     alpha 0.9
     ease 2.2 alpha 1.0
 
+define fade = Fade(0.5, 0.0, 0.5, color="#FFFFFF")
 define dream_scene_transition = Fade(0.35, 0.0, 0.35, color="#FFFFFF")
 
 
@@ -93,6 +94,7 @@ label start:
 
     scene bg dream6
     with dream_scene_transition
+    $ premium_gallery_unlock("bg dream6")
 
     $ safe_play("bgm_dream_healing.oga", channel="music", fadein=1.8)
 
@@ -110,6 +112,7 @@ label start:
 
     scene bg dream
     with dream_scene_transition
+    $ premium_gallery_unlock("bg dream")
 
     "朦胧的白光深处，渐渐浮现出一个人的轮廓。"
 
@@ -128,6 +131,7 @@ label start:
 
     scene bg dream3
     with dream_scene_transition
+    $ premium_gallery_unlock("bg dream3")
 
     "女孩的面庞像浸在一层将散未散的薄雾里。"
 
@@ -209,6 +213,7 @@ label start:
 
     scene bg goodmorning
     with Dissolve(1.5)
+    $ premium_gallery_unlock("bg goodmorning")
 
     $ safe_play("bgm_morning_gymnopedie_no1.mp3", channel="music", fadein=2.2)
 
@@ -223,51 +228,63 @@ label start:
 
     i "太阳晒屁股了，老哥"
 
-    "是妹妹吗...我靠不对劲！"
+    "是妹妹吗..."
 
-    "你感到下体传来的一阵异样感"
+    "不对！！"
+
+    "我靠！！！"
+    
+    "我靠不对劲！！！"
+
+    "我感到下体传来的一阵异样感"
 
     scene bg goodmorning3
 
     i "嗯？"
 
-    "布耗！"
+    "不妙。"
 
-    "空气像是凝固了一样，违和的气氛在周围滋生，不过下体的异样感依旧难以抑制"
+    "空气像是一下子冻结了。清晨微暖的光线还停在窗帘缝隙里，房间里却先一步漫开了某种说不清的尴尬。"
+    "偏偏身体的异样感丝毫没有收敛，反而在这种沉默里被衬得更加鲜明。"
 
     scene bg goodmorning4
     with dissolve
+    $ premium_gallery_unlock("bg goodmorning4")
 
-    m "额...是，是这样的，妹妹，你听我说"
+    m "额...不，不是你想的那样，妹妹，你先听我解释。"
 
-    "她的脸红到了耳根"
+    "她像是被按下了暂停键，整个人僵在原地。"
+    "那张原本就白净的脸一下子染上绯色，红晕从脸颊一路烧到耳根，连睫毛都像在细细发颤。"
 
     scene bg goodmorning5
     with dissolve
 
-    i "原...原来是这样吗"
+    i "原...原来，哥哥早上会是这种状态吗..."
 
-    i "大早上的还真是兴致盎然啊"
+    i "大早上的，还真是...兴致盎然呢。"
 
-    "完，完蛋了！"
+    "完了。"
 
-    "绝对不行啊！！被妹妹看到自己这样的一面..."
+    "被妹妹撞见这种场面，已经不是一句尴尬可以形容的了。"
+    "再这样僵持下去，身为哥哥的威严大概会和理智一起当场蒸发。"
 
-    "左手快速从一旁伸出，朝着枪械的握把抓去，妄图在失控前控枪"
+    "我几乎是条件反射般把左手探向一旁，试图在彻底失控之前把眼前这场灾难抢救回来。"
 
     scene bg goodmorning6
     with fade
 
-    i "噫！"
+    i "噫...！"
 
-    "动作还是暴露了"
+    "可惜，动作终究还是太明显了。"
+    "那一瞬间，她的视线像被针扎到一样猛地一缩，整个人都跟着弹了起来。"
 
     scene bg room
     with dissolve
+    $ premium_gallery_unlock("bg room")
 
     show imouto_surprised2:
         xpos 0.60
-        ypos 0
+        ypos 130
         easeout 0.18 xpos 0.70
         easeout 0.06 xpos 0.68
         easeout 0.06 xpos 0.72
@@ -275,46 +292,59 @@ label start:
         easeout 0.06 xpos 0.71
         easeout 0.08 xpos 0.70
 
-    i "哥...哥哥你果然还是忍耐不住了吗"
+    "床铺轻轻一陷又猛地回弹，她几乎是连滚带爬地退了出去。"
+    "发尾在空中晃了一下，慌乱得像只受惊的小动物。"
+
+    i "哥...哥哥你，果然还是忍耐不住了吗..."
 
     hide imouto_surprised2
 
     show imouto_awkward:
         xpos 0.70
-        ypos 0
+        ypos 130
         easein 0.18 xpos 0.66
         easein 0.24 xpos 0.62
 
-    i "早，早饭做好了哦...哥哥最近压力是不是太大了，要...要快点出来吃饭哦..."
+    "她一边后退，一边慌慌张张地把目光移开，像是连多看我一眼都会让脸更烫几分。"
+
+    i "早，早饭已经做好了哦..."
+    i "哥哥最近压力是不是太大了...总，总之先快点出来吃饭吧。"
 
     hide imouto_awkward
 
     show imouto_shy:
         xpos 0.62
-        ypos 0
+        ypos 130
         easein 0.12 xpos 0.58
         easein 0.12 xpos 0.54
         easein 0.12 xpos 0.50
         easein 0.12 xpos 0.46
 
-    i "我，我先去吃饭了..."
+    "声音越说越小，到了后半句几乎快要埋进胸口。"
+
+    i "我...我先去外面等你了。"
 
     show imouto_shy:
         xpos 0.46
-        ypos 0
+        ypos 130
         easein 0.14 xpos -0.60
 
     $ safe_play("closedoor.mp3")
     pause 0.18
     hide imouto_shy
 
-    show layer master at shake_screen
-
     $ safe_play("ohno!.mp3")
 
-    "!!!!!"
+    "房门合上的那一刻，世界短暂地安静了一瞬。"
+    "下一秒，脑袋里像是有什么东西轰然炸开。"
 
-    "果然还是完蛋了吧！！"
+    show layer master at shake_screen
+
+    "这下子，果然彻底完蛋了吧！！"
+
+    "敬请期待后续"
+
+    return
 
     scene bg room
     with fade
@@ -331,6 +361,7 @@ label start:
 
     scene bg livingroom
     with fade
+    $ premium_gallery_unlock("bg livingroom")
 
     $ safe_play("bgm_love_her.ogg", channel="music", fadein=1.6)
 
@@ -338,6 +369,7 @@ label start:
 
     scene bg imouto_on_sofa
     with dissolve
+    $ premium_gallery_unlock("bg imouto_on_sofa")
 
     "一个黑色短发的女孩正坐在沙发的一边，愣愣地发呆，脸上还留有一丝淡淡的红晕"
 
@@ -347,6 +379,7 @@ label start:
 
     scene bg imouto_back
     with fade
+    $ premium_gallery_unlock("bg imouto_back")
 
     "小心翼翼地绕道沙发后面，少女仍未察觉到危险即将来临，盯着墙皮不知在想些什么"
 
@@ -381,6 +414,7 @@ label start:
 
     scene breakfast
     with fade
+    $ premium_gallery_unlock("breakfast")
 
     "在一阵鸡飞狗跳之后，总算还是安稳地坐到了餐桌前。"
 

@@ -44,6 +44,9 @@
     if not hasattr(store.persistent, "premium_total_playtime_seconds"):
         store.persistent.premium_total_playtime_seconds = 0.0
 
+    if not hasattr(store.persistent, "premium_gallery_seen"):
+        store.persistent.premium_gallery_seen = []
+
     def premium_total_playtime_value():
         raw = getattr(store.persistent, "premium_total_playtime_seconds", 0.0)
         if raw is None:
@@ -271,8 +274,8 @@
     }
 
     premium_menu_player_track_order = [
-        "audio/bgm_love_her.ogg",
         "audio/bgm_old_saga.ogg",
+        "audio/bgm_love_her.ogg",
         "audio/bgm_dream_healing.oga",
         "audio/bgm_morning_midsommar.oga",
         "audio/bgm_morning_gymnopedie_no1.mp3",
@@ -548,21 +551,24 @@
         ("早餐特写", "breakfast"),
     ]
 
+    def premium_gallery_seen_set():
+        raw = getattr(store.persistent, "premium_gallery_seen", [])
+        if isinstance(raw, set):
+            return set(raw)
+        if isinstance(raw, (list, tuple)):
+            return set(raw)
+        return set()
+
+    def premium_gallery_unlock(scene_name):
+        seen = premium_gallery_seen_set()
+        if scene_name in seen:
+            return
+        seen.add(scene_name)
+        store.persistent.premium_gallery_seen = sorted(seen)
+        renpy.save_persistent()
+
     def premium_gallery_unlocked(scene_name):
-        if scene_name == "breakfast":
-            return renpy.loadable("images/breakfast.png")
-        lookup = {
-            "bg dream": "images/bg_dream.png",
-            "bg dream3": "images/bg_dream3.png",
-            "bg dream6": "images/bg_dream6.png",
-            "bg goodmorning": "images/bg_goodmorning.png",
-            "bg goodmorning4": "images/bg_goodmorning4.png",
-            "bg room": "images/bg_room.png",
-            "bg livingroom": "images/bg_livingroom.png",
-            "bg imouto_on_sofa": "images/bg_imouto_on_sofa.png",
-            "bg imouto_back": "images/bg_imouto_back.png",
-        }
-        return renpy.loadable(lookup.get(scene_name, ""))
+        return scene_name in premium_gallery_seen_set()
 
     renpy.music.register_channel(
         "main_menu_op",
@@ -922,9 +928,6 @@ screen premium_menu_shell(title, scroll=None, yinitial=0.0, spacing=22):
             use premium_nav_hover_textbutton(_("历史"), ShowMenu("history"), "history", sensitive=(not main_menu))
             use premium_nav_hover_textbutton(_("关于"), ShowMenu("about"), "about")
             use premium_nav_hover_textbutton(_("帮助"), ShowMenu("help"), "help", sensitive=(renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile"))))
-
-            if CurrentScreenName() != "main_menu":
-                use premium_nav_hover_textbutton(_("主界面"), ShowMenu("main_menu"), "main_menu")
 
             if not main_menu and not _in_replay:
                 use premium_nav_hover_textbutton(_("返回标题"), MainMenu(), "title")
