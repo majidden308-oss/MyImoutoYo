@@ -1,0 +1,132 @@
+# 《我的妹妹哟》游戏资源清单
+# 最后更新日期：2024年1月
+# ==============================================
+
+## 🖼️ 图像资源清单 (Images)
+
+### 背景图片 (Backgrounds) - 必须存在
+# 位置: images/ 文件夹
+# 格式: 推荐PNG或JPG，分辨率1920x1080
+
+1. bg dream
+2. bg dream2
+3. bg dream3
+4. bg dream4
+5. bg dream5
+6. bg dream6
+7. bg goodmorning
+8. bg goodmorning2
+9. bg goodmorning3
+10. bg goodmorning4
+11. bg goodmorning5
+12. bg goodmorning6
+13. bg room
+14. bg livingroom
+15. bg imouto_on_sofa
+16. bg imouto_back
+17. breakfast
+
+### 角色立绘 (Character Sprites) - 必须存在
+# 位置: images/ 文件夹
+# 格式: PNG透明背景，分辨率约800x1000像素
+
+1. imouto_surprised
+2. imouto_awkward
+3. imouto_shy
+4. imouto_back_face
+5. imouto_back_face2
+6. imouto_back_face3
+7. imouto_back_mad
+8. imouto_sofa_mad
+9. imouto_sofa_shy
+10. imouto_sofa_shy2
+11. imouto_sofa_shy3
+12. imouto_sofa_shy4
+13. imouto_sofa_shy5
+14. imouto_sofa_shy6
+
+### GUI界面图片 - 新增/需要优化
+# 位置: gui/ 文件夹
+# 格式: PNG，透明背景
+
+1. 【新增】gui/main_menu_bg.png - 主菜单背景
+2. 【新增】gui/title_logo.png - 标题logo
+3. 【新增】gui/textbox_new.png - 新对话框图片
+4. 【新增】gui/textbox_overlay.png - 对话框遮罩
+5. 【新增】gui/button/main_menu_idle.png - 主菜单按钮默认状态
+6. 【新增】gui/button/main_menu_hover.png - 主菜单按钮悬停状态
+7. 【新增】gui/button/main_menu_insensitive.png - 主菜单按钮禁用状态
+
+### 现有GUI图片 - 检查是否存在
+1. gui/textbox.png
+2. gui/namebox.png
+3. gui/main_menu.png
+4. gui/game_menu.png
+5. gui/frame.png
+6. gui/overlay/main_menu.png
+7. gui/overlay/game_menu.png
+8. gui/overlay/confirm.png
+9. gui/notify.png
+10. gui/skip.png
+11. gui/nvl.png
+12. gui/window_icon.png
+13. gui/bubble.png
+14. gui/thoughtbubble.png
+
+## 🎵 音频资源清单 (Audio)
+
+### 现有音频文件 - 从script.rpy中提取
+# 位置: audio/ 文件夹
+# 格式: 推荐MP3或OGG
+
+1. erming.mp3
+2. morning.mp3
+3. closedoor.mp3
+4. ohno!.mp3
+5. wearing.mp3
+6. opendoor.mp3
+
+### 建议添加的音频
+1. 【建议】main_menu_theme.mp3 - 主菜单专用音乐
+2. 【建议】click.wav - 按钮点击音效
+3. 【建议】page_turn.wav - 页面翻动音效
+4. 【建议】notification.wav - 通知音效
+
+## 📝 字体文件
+1. SourceHanSansLite.ttf - 思源黑体轻量版
+
+## ⚙️ 配置检查清单
+
+### 文件结构确认
+- [ ] images/ 文件夹存在且包含所有背景和角色图片
+- [ ] audio/ 文件夹存在且包含所有音频文件
+- [ ] gui/ 文件夹包含所有界面图片
+- [ ] 字体文件存在于项目根目录
+
+### 运行前检查
+- [ ] script.rpy 中的所有图像引用都正确
+- [ ] 所有音频文件都已放置在audio/文件夹
+- [ ] 主菜单背景音乐已配置（options.rpy第39行）
+- [ ] GUI颜色主题已按需调整（gui.rpy）
+
+### 性能优化建议
+1. 图像分辨率：背景图1920x1080，立绘800-1000px高度
+2. 音频格式：使用OGG格式以减小文件大小
+3. 图片格式：PNG带透明度，JPG用于背景
+4. 文件命名：使用英文小写，避免特殊字符
+
+## 🚀 下一步开发建议
+
+1. 音效系统：为按钮、转场添加音效
+2. 特效系统：添加粒子效果、屏幕滤镜
+3. 角色动画：眨眼、呼吸等微动作
+4. 自动保存：定期自动保存功能
+5. 手机适配：优化触控界面
+
+## 📋 版本控制
+v1.0 - 基础功能完成
+v1.1 - UI优化与动画增强（当前版本）
+
+# ==============================================
+# 检查完毕，准备构建游戏！
+# ==============================================

@@ -1,0 +1,121 @@
+[
+  {
+    "scene_id": "bg dream",
+    "filename": "bg_dream.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel background, dreamy moonlit sky above a hazy landscape, soft blue night gradient, drifting mist, distant glow, cinematic composition, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg dream2",
+    "filename": "bg_dream2.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel background, dream sequence continuation, moonlit sky and layered fog, slightly brighter horizon, soft blue and lavender tones, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg dream3",
+    "filename": "bg_dream3.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel background, romantic dream atmosphere, blurred moonlit landscape, soft violet-blue palette, luminous fog, calm cinematic framing, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg dream4",
+    "filename": "bg_dream4.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel background, surreal dreamscape with stronger contrast, moonlight cutting through mist, cool blue tones, mysterious but gentle atmosphere, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg dream5",
+    "filename": "bg_dream5.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel background, tense dream scene with bright haze and dissolving surroundings, pale blue-white glow, layered fog, ethereal composition, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg dream6",
+    "filename": "bg_dream6.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel background, dream ending swallowed by white light, bright washed-out blue-white atmosphere, fog and glow filling the frame, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg goodmorning",
+    "filename": "bg_goodmorning.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel bedroom background, warm morning sunlight through a window, tidy Japanese-style modern bedroom, bed and desk visible, cozy daily-life mood, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg goodmorning2",
+    "filename": "bg_goodmorning2.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel bedroom background, same cozy bedroom in warm morning light, slightly shifted camera angle for dialogue continuity, calm domestic atmosphere, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg goodmorning3",
+    "filename": "bg_goodmorning3.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel bedroom background, sunlit room with softer golden tones, bed and window visible, intimate morning scene, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg goodmorning4",
+    "filename": "bg_goodmorning4.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel bedroom background, same room with slightly more dramatic morning light, warm shadows, visual novel conversation framing, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg goodmorning5",
+    "filename": "bg_goodmorning5.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel bedroom background, warm bright bedroom scene with gentle sunlight, bed and simple furniture, slice-of-life feel, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg goodmorning6",
+    "filename": "bg_goodmorning6.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel bedroom background, final morning bedroom shot, soft warm palette, stable composition suitable for dialogue reactions, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg room",
+    "filename": "bg_room.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel interior background, a personal bedroom with bed, shelf, door, and wooden floor, clean framing for character sprites, warm neutral palette, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg livingroom",
+    "filename": "bg_livingroom.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel living room background, inherited family home, spacious cozy room with sofa, low table, rug, and window light, everyday slice-of-life mood, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg imouto_on_sofa",
+    "filename": "bg_imouto_on_sofa.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel living room close shot, focus on a sofa area with soft daylight and quiet atmosphere, composition intended for a seated character in foreground, no people, no text, no logo."
+  },
+  {
+    "scene_id": "bg imouto_back",
+    "filename": "bg_imouto_back.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel over-the-sofa background, a view from behind a sofa in a quiet living room, intimate composition for a sneaking-up scene, soft daylight, no people, no text, no logo."
+  },
+  {
+    "scene_id": "breakfast",
+    "filename": "breakfast.png",
+    "size": "1536x1024",
+    "quality": "high",
+    "prompt": "Anime visual novel breakfast close-up background, wooden dining table with a plated fried egg, porridge bowl, and simple home breakfast arrangement, warm appetizing morning light, no people, no text, no logo."
+  }
+]

@@ -1,0 +1,27 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/script.rpy", line 358, in script
+    i "停，停下！呜...#￥%啊啊~~"
+ValueError: unsupported format character '?' (0x554a) at index 12
+
+-- Full Traceback ------------------------------------------------------------
+
+Traceback (most recent call last):
+  File "game/script.rpy", line 358, in script
+    i "停，停下！呜...#￥%啊啊~~"
+  File "renpy/ast.py", line 2915, in execute
+    Say.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "renpy/ast.py", line 991, in execute
+    renpy.exports.say(who, what, *args, **kwargs)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/exports/sayexports.py", line 118, in say
+    what = what % tag_quoting_dict
+           ~~~~~^~~~~~~~~~~~~~~~~~
+ValueError: unsupported format character '?' (0x554a) at index 12
+
+Windows-11-10.0.26200-SP0 AMD64
+Ren'Py 8.4.1.25072401
+my imouto yo v0.1
+Sat Apr 11 12:40:00 2026
