@@ -20,7 +20,7 @@ init -6 python:
 
     menu_companion_character_defs = {
         "hero": {
-            "display_name": u"莫于",
+            "display_name": u"林细枝",
             "main_image": "menu_companion_hero_base",
             "lashes_image": "menu_companion_hero_lashes",
             "closed_image": "menu_companion_hero_closed",

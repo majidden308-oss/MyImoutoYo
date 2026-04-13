@@ -1,6 +1,7 @@
 ﻿init -10 python:
     import os
     import renpy.store as store
+    import renpy.ui as ui
     import random
     import time
 
@@ -40,6 +41,9 @@
 
     if not hasattr(store, "_premium_menu_bg_offset_y"):
         store._premium_menu_bg_offset_y = 0.0
+
+    if not hasattr(store, "_premium_story_history_snap_to_end"):
+        store._premium_story_history_snap_to_end = False
 
     if not hasattr(store.persistent, "premium_total_playtime_seconds"):
         store.persistent.premium_total_playtime_seconds = 0.0
@@ -126,8 +130,39 @@
         prefs = premium_preferences()
         return bool(getattr(prefs, "transitions", 2))
 
-    def premium_pref_state_text(enabled):
-        return u"当前：开启" if enabled else u"当前：关闭"
+    def premium_pref_all_mute_enabled():
+        prefs = premium_preferences()
+        if prefs is None:
+            return False
+        return bool(prefs.get_mute("main"))
+
+    def premium_pref_check_mark(enabled):
+        return u"✓" if enabled else u"✕"
+
+    premium_window_resolution_presets = [
+        (1280, 720, u"1280 x 720"),
+        (1600, 900, u"1600 x 900"),
+        (1920, 1080, u"1920 x 1080"),
+        (2560, 1440, u"2560 x 1440"),
+    ]
+
+    def premium_current_window_resolution():
+        try:
+            return renpy.get_physical_size()
+        except Exception:
+            return (renpy.config.screen_width, renpy.config.screen_height)
+
+    def premium_window_resolution_matches(width, height):
+        current_width, current_height = premium_current_window_resolution()
+        return int(current_width) == int(width) and int(current_height) == int(height)
+
+    def premium_window_resolution_summary():
+        width, height = premium_current_window_resolution()
+        return u"当前窗口：{} x {}".format(int(width), int(height))
+
+    def premium_set_window_resolution(width, height):
+        renpy.set_physical_size((int(width), int(height)))
+        renpy.restart_interaction()
 
     def premium_ease_out_cubic(t):
         return 1.0 - pow(1.0 - t, 3.0)
@@ -238,6 +273,127 @@
             int(round(float(getattr(store, "_premium_menu_bg_offset_x", 0.0)))),
             int(round(float(getattr(store, "_premium_menu_bg_offset_y", 0.0)))),
         )
+
+    def premium_story_history_open():
+        store.premium_dialogue_history_visible = True
+        store._premium_story_history_snap_to_end = True
+        renpy.restart_interaction()
+
+    def premium_story_history_close():
+        store.premium_dialogue_history_visible = False
+        renpy.restart_interaction()
+
+    def premium_story_history_scroll_amount(adjustment):
+        page = float(getattr(adjustment, "page", 0.0) or 0.0)
+        step = float(getattr(adjustment, "step", 0.0) or 0.0)
+        return max(step, page * 0.16, float(premium_sy(84)))
+
+    def premium_story_history_is_at_bottom(adjustment):
+        if adjustment is None:
+            return True
+
+        current = float(getattr(adjustment, "value", 0.0) or 0.0)
+        maximum = max(0.0, float(getattr(adjustment, "range", 0.0) or 0.0))
+        return current >= (maximum - 2.0)
+
+    def premium_story_history_scroll(adjustment, direction):
+        if adjustment is None:
+            return
+
+        amount = premium_story_history_scroll_amount(adjustment)
+        current = float(getattr(adjustment, "value", 0.0) or 0.0)
+        maximum = max(0.0, float(getattr(adjustment, "range", 0.0) or 0.0))
+        target = max(0.0, min(maximum, current + (amount * float(direction))))
+
+        try:
+            adjustment.change(target)
+        except Exception:
+            adjustment.value = target
+
+        renpy.restart_interaction()
+
+    def premium_story_history_scroll_down_or_close(adjustment):
+        if premium_story_history_is_at_bottom(adjustment):
+            premium_story_history_close()
+            return
+
+        premium_story_history_scroll(adjustment, 1.0)
+
+    def premium_story_history_viewport_height():
+        return max(1.0, float(renpy.config.screen_height - premium_sy(30)))
+
+    def premium_story_history_text_width():
+        return max(120.0, float(
+            renpy.config.screen_width
+            - premium_sx(36)
+            - premium_sx(28)
+            - premium_sx(20)
+            - premium_sx(20)
+        ))
+
+    def premium_story_history_estimated_lines(text, font_size):
+        normalized = (text or u"").replace("{nw}", u"").replace("{fast}", u"")
+        normalized = normalized.replace("{p}", "\n").replace("{w}", "")
+        segments = normalized.split("\n")
+        approx_chars_per_line = max(8, int(premium_story_history_text_width() / max(1.0, float(font_size) * 0.92)))
+        line_total = 0
+
+        for segment in segments:
+            segment_length = max(1, len(segment))
+            line_total += max(1, int((segment_length + approx_chars_per_line - 1) / approx_chars_per_line))
+
+        return max(1, line_total)
+
+    def premium_story_history_entry_estimated_height(who, what):
+        vertical_padding = premium_sy(16) * 2
+        spacing = premium_sy(8)
+        body_font = premium_ss(29)
+        body_line_height = body_font + premium_sy(10) + premium_sy(4)
+        total_height = vertical_padding
+        body_lines = premium_story_history_estimated_lines(what, body_font)
+        total_height += body_lines * body_line_height
+
+        if who:
+            name_font = premium_ss(34)
+            total_height += name_font + spacing
+
+        return float(total_height)
+
+    def premium_story_history_entry_alpha(entry_top, entry_height, adjustment):
+        if adjustment is None:
+            return 1.0
+
+        viewport_height = premium_story_history_viewport_height()
+        visible_top = float(getattr(adjustment, "value", 0.0) or 0.0)
+        visible_bottom = visible_top + viewport_height
+        fade_height = min(float(premium_sy(220)), viewport_height * 0.42)
+        fade_start = visible_bottom - fade_height
+        entry_bottom = entry_top + entry_height
+
+        if entry_bottom <= fade_start:
+            return 1.0
+
+        if entry_top >= visible_bottom:
+            return 0.0
+
+        focus_y = min(entry_bottom, visible_bottom)
+        ratio = (focus_y - fade_start) / max(1.0, fade_height)
+        ratio = max(0.0, min(1.0, ratio))
+        return max(0.0, 1.0 - pow(ratio, 1.45))
+
+    def premium_story_history_snap_to_end(adjustment):
+        if (adjustment is None) or (not getattr(store, "_premium_story_history_snap_to_end", False)):
+            return
+
+        maximum = max(0.0, float(getattr(adjustment, "range", 0.0) or 0.0))
+
+        try:
+            adjustment.change(maximum)
+        except Exception:
+            adjustment.value = maximum
+
+        store._premium_story_history_snap_to_end = False
+        renpy.restart_interaction()
 
     def premium_main_menu_background_displayable():
         return Solid("#FFFFFF")
@@ -616,6 +772,7 @@ define premium_load_in_transition = Fade(0.0, 0.0, 0.42, color="#FFFFFF")
 define premium_body_font = "fonts/NotoSerifCJKsc-Regular.otf"
 define premium_ui_font = "fonts/NotoSansCJKsc-Regular.otf"
 define premium_name_font = "fonts/LXGWWenKai-Regular.ttf"
+define premium_symbol_font = "fonts/NotoSansSymbols2-Regular.ttf"
 define premium_main_menu_op_cutoff = 2.92
 
 define config.enter_transition = premium_menu_fade
@@ -647,6 +804,8 @@ default main_menu_player_last_pos = 0.0
 default main_menu_player_volume = 0.6
 default main_menu_player_page = "now_playing"
 default main_menu_player_previous_page = "now_playing"
+default premium_dialogue_history_visible = False
+
 transform ui_fade_in:
     alpha 0.0
     ease 0.32 alpha 1.0
@@ -679,6 +838,30 @@ transform scale_in_soft:
 transform alpha_dissolve_soft:
     alpha 0.0
     ease 0.4 alpha 1.0
+
+transform premium_story_history_fade:
+    on show:
+        alpha 0.0
+        yoffset premium_sy(18)
+        parallel:
+            ease 0.24 alpha 1.0
+        parallel:
+            ease 0.24 yoffset 0
+    on hide:
+        alpha 1.0
+        yoffset 0
+        parallel:
+            ease 0.18 alpha 0.0
+        parallel:
+            ease 0.18 yoffset premium_sy(12)
+
+transform premium_story_history_backdrop_fade:
+    on show:
+        alpha 0.0
+        ease 0.22 alpha 1.0
+    on hide:
+        alpha 1.0
+        ease 0.16 alpha 0.0
 
 transform blur_fade_soft:
     alpha 0.0
@@ -915,14 +1098,13 @@ screen premium_menu_shell(title, scroll=None, yinitial=0.0, spacing=22):
         at slide_panel_left
 
         vbox:
-            spacing 14
+            spacing 32
 
             text "my imouto yo":
                 style "premium_brand_text"
 
             use premium_nav_hover_textbutton(_("开始游戏"), Start(), "start")
             use premium_nav_hover_textbutton(_("读取游戏"), ShowMenu("load"), "load")
-            use premium_nav_hover_textbutton(_("保存记录"), ShowMenu("save"), "save", sensitive=(not main_menu))
             use premium_nav_hover_textbutton(_("设置"), ShowMenu("preferences"), "preferences")
             use premium_nav_hover_textbutton(_("画廊"), ShowMenu("cg_gallery"), "gallery")
             use premium_nav_hover_textbutton(_("历史"), ShowMenu("history"), "history", sensitive=(not main_menu))
@@ -994,20 +1176,102 @@ screen premium_menu_shell(title, scroll=None, yinitial=0.0, spacing=22):
 screen say(who, what):
     use premium_playtime_tracker
 
-    window:
-        id "window"
+    key "mousedown_4" action If(
+        premium_dialogue_history_visible,
+        NullAction(),
+        Function(premium_story_history_open),
+    )
+    key "mousedown_5" action If(
+        premium_dialogue_history_visible,
+        NullAction(),
+        RollForward(),
+    )
 
-        if who is not None:
-            window:
-                id "namebox"
-                style "namebox"
+    if not premium_dialogue_history_visible:
+        window:
+            id "window"
 
-                text who id "who"
+            if who is not None:
+                window:
+                    id "namebox"
+                    style "namebox"
 
-        text what id "what"
+                    text who id "who"
 
-    if not renpy.variant("small"):
+            text what id "what"
+
+    if (not premium_dialogue_history_visible) and (not renpy.variant("small")):
         add SideImage() xalign 0.0 yalign 1.0
+
+    use premium_story_history_overlay
+
+
+screen premium_story_history_overlay():
+    zorder 140
+    default history_yadjust = ui.adjustment()
+
+    showif premium_dialogue_history_visible:
+        key "dismiss" action Function(premium_story_history_close)
+        key "K_ESCAPE" action Function(premium_story_history_close)
+        key "mousedown_4" action Function(premium_story_history_scroll, history_yadjust, -1.0)
+        key "mousedown_5" action Function(premium_story_history_scroll_down_or_close, history_yadjust)
+
+        button:
+            style "premium_story_history_backdrop_button"
+            action NullAction()
+            at premium_story_history_backdrop_fade
+
+        frame:
+            style "premium_story_history_panel"
+            at premium_story_history_fade
+
+            timer 0.01 action Function(premium_story_history_snap_to_end, history_yadjust)
+
+            fixed:
+                xfill True
+                yfill True
+
+                viewport:
+                    style "premium_story_history_viewport"
+                    yadjustment history_yadjust
+                    scrollbars None
+                    draggable True
+                    mousewheel False
+                    pagekeys True
+
+                    vbox:
+                        xfill True
+                        spacing premium_sy(14)
+                        $ history_entry_top = 0.0
+
+                        if _history_list:
+                            for h in _history_list:
+                                $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                                $ entry_height = premium_story_history_entry_estimated_height(h.who, what)
+                                frame:
+                                    style "premium_story_history_entry"
+                                    at Transform(alpha=premium_story_history_entry_alpha(history_entry_top, entry_height, history_yadjust))
+
+                                    vbox:
+                                        xfill True
+                                        spacing premium_sy(8)
+
+                                        if h.who:
+                                            text h.who:
+                                                style "premium_story_history_name"
+                                                substitute False
+
+                                        text what:
+                                            style "premium_story_history_text"
+                                            substitute False
+
+                                $ history_entry_top += entry_height + premium_sy(14)
+                        else:
+                            frame:
+                                style "premium_story_history_entry"
+
+                                text _("尚无对话历史记录。"):
+                                    style "premium_story_history_text"
 
 
 style window:
@@ -1064,7 +1328,7 @@ screen choice(items):
 screen quick_menu():
     zorder 100
 
-    if quick_menu:
+    if quick_menu and (not premium_dialogue_history_visible):
         hbox:
             style_prefix "quick"
             style "quick_menu"
@@ -1182,11 +1446,10 @@ screen main_menu_settings():
                         text _("设置"):
                             style "premium_pref_title"
 
-                        text _("这里只保留设置内容。"):
+                        text _("在这里更改基础设置"):
                             style "premium_pref_body"
 
-                    null:
-                        xfill True
+                    null width 0 xfill True
 
                     textbutton _("返回"):
                         action ShowMenu("main_menu")
@@ -1196,8 +1459,17 @@ screen main_menu_settings():
                 spacing premium_sx(12)
                 at scale_in_soft
 
-                textbutton _("显示") action SetScreenVariable("pref_tab", "display") style "premium_tab_button"
-                textbutton _("音量") action SetScreenVariable("pref_tab", "audio") style "premium_tab_button"
+                textbutton _("显示"):
+                    action SetScreenVariable("pref_tab", "display")
+                    style "premium_tab_button"
+                    sensitive pref_tab != "display"
+                    selected pref_tab == "display"
+
+                textbutton _("音量"):
+                    action SetScreenVariable("pref_tab", "audio")
+                    style "premium_tab_button"
+                    sensitive pref_tab != "audio"
+                    selected pref_tab == "audio"
 
             use main_menu_settings_pref_content(pref_tab)
 
@@ -1219,6 +1491,38 @@ screen main_menu_settings_pref_content(pref_tab):
                         textbutton _("窗口模式") action Preference("display", "window") style "premium_pref_button"
                         textbutton _("全屏模式") action Preference("display", "fullscreen") style "premium_pref_button"
 
+                        if renpy.variant("pc"):
+                            null height premium_sy(8)
+                            text _("窗口分辨率") style "premium_pref_label"
+                            text "[premium_window_resolution_summary()]":
+                                style "premium_pref_status"
+
+                            hbox:
+                                spacing premium_sx(10)
+
+                                textbutton _("1280 x 720"):
+                                    action [Preference("display", "window"), Function(premium_set_window_resolution, 1280, 720)]
+                                    style "premium_pref_button"
+                                    sensitive not premium_window_resolution_matches(1280, 720)
+
+                                textbutton _("1600 x 900"):
+                                    action [Preference("display", "window"), Function(premium_set_window_resolution, 1600, 900)]
+                                    style "premium_pref_button"
+                                    sensitive not premium_window_resolution_matches(1600, 900)
+
+                            hbox:
+                                spacing premium_sx(10)
+
+                                textbutton _("1920 x 1080"):
+                                    action [Preference("display", "window"), Function(premium_set_window_resolution, 1920, 1080)]
+                                    style "premium_pref_button"
+                                    sensitive not premium_window_resolution_matches(1920, 1080)
+
+                                textbutton _("2560 x 1440"):
+                                    action [Preference("display", "window"), Function(premium_set_window_resolution, 2560, 1440)]
+                                    style "premium_pref_button"
+                                    sensitive not premium_window_resolution_matches(2560, 1440)
+
             frame:
                 style "premium_pref_card"
                 xfill True
@@ -1233,42 +1537,39 @@ screen main_menu_settings_pref_content(pref_tab):
                     bar value Preference("auto-forward time") style "premium_slider"
 
     elif pref_tab == "audio":
-        hbox:
-            spacing premium_sx(22)
+        vbox:
+            spacing premium_sy(18)
 
-            if config.has_music:
-                frame:
-                    style "premium_pref_card"
-                    xfill True
+            frame:
+                style "premium_pref_card"
+                xfill True
 
-                    vbox:
-                        spacing 14
-                        text _("音乐音量") style "premium_pref_title"
-                        bar value Preference("music volume") style "premium_slider"
+                vbox:
+                    spacing 14
+                    text _("音乐音量") style "premium_pref_title"
+                    bar value Preference("music volume") style "premium_slider"
 
-            if config.has_sound:
-                frame:
-                    style "premium_pref_card"
-                    xfill True
+            frame:
+                style "premium_pref_card"
+                xfill True
 
-                    vbox:
-                        spacing 14
-                        text _("音效音量") style "premium_pref_title"
-                        bar value Preference("sound volume") style "premium_slider"
-                        if config.sample_sound:
-                            textbutton _("试听音效") action Play("sound", config.sample_sound) style "premium_pref_button"
+                vbox:
+                    spacing 14
+                    text _("音效音量") style "premium_pref_title"
+                    bar value Preference("sound volume") style "premium_slider"
+                    if config.sample_sound:
+                        textbutton _("试听音效") action Play("sound", config.sample_sound) style "premium_pref_button"
 
-            if config.has_voice:
-                frame:
-                    style "premium_pref_card"
-                    xfill True
+            frame:
+                style "premium_pref_card"
+                xfill True
 
-                    vbox:
-                        spacing 14
-                        text _("语音音量") style "premium_pref_title"
-                        bar value Preference("voice volume") style "premium_slider"
-                        if config.sample_voice:
-                            textbutton _("试听语音") action Play("voice", config.sample_voice) style "premium_pref_button"
+                vbox:
+                    spacing 14
+                    text _("语音音量") style "premium_pref_title"
+                    bar value Preference("voice volume") style "premium_slider"
+                    if config.sample_voice:
+                        textbutton _("试听语音") action Play("voice", config.sample_voice) style "premium_pref_button"
 
 screen main_menu_song_player_widget():
     zorder 230
@@ -1676,10 +1977,11 @@ screen main_menu_notebook_drawer():
                                         xpos premium_sx(18)
                                         ypos premium_sy(101)
 
-                                    text (save_name if save_name else _("未命名存档")):
-                                        style "premium_notebook_slot_title"
-                                        xpos premium_sx(16)
-                                        ypos premium_sy(136)
+                                    if save_name:
+                                        text save_name:
+                                            style "premium_notebook_slot_title"
+                                            xpos premium_sx(16)
+                                            ypos premium_sy(136)
 
 
 screen main_menu_notebook_load_overlay():
@@ -1833,6 +2135,38 @@ screen preferences():
                                 textbutton _("窗口模式") action Preference("display", "window") style "premium_pref_button"
                                 textbutton _("全屏模式") action Preference("display", "fullscreen") style "premium_pref_button"
 
+                                if renpy.variant("pc"):
+                                    null height premium_sy(8)
+                                    text _("窗口分辨率") style "premium_pref_label"
+                                    text "[premium_window_resolution_summary()]":
+                                        style "premium_pref_status"
+
+                                    hbox:
+                                        spacing premium_sx(10)
+
+                                        textbutton _("1280 x 720"):
+                                            action [Preference("display", "window"), Function(premium_set_window_resolution, 1280, 720)]
+                                            style "premium_pref_button"
+                                            sensitive not premium_window_resolution_matches(1280, 720)
+
+                                        textbutton _("1600 x 900"):
+                                            action [Preference("display", "window"), Function(premium_set_window_resolution, 1600, 900)]
+                                            style "premium_pref_button"
+                                            sensitive not premium_window_resolution_matches(1600, 900)
+
+                                    hbox:
+                                        spacing premium_sx(10)
+
+                                        textbutton _("1920 x 1080"):
+                                            action [Preference("display", "window"), Function(premium_set_window_resolution, 1920, 1080)]
+                                            style "premium_pref_button"
+                                            sensitive not premium_window_resolution_matches(1920, 1080)
+
+                                        textbutton _("2560 x 1440"):
+                                            action [Preference("display", "window"), Function(premium_set_window_resolution, 2560, 1440)]
+                                            style "premium_pref_button"
+                                            sensitive not premium_window_resolution_matches(2560, 1440)
+
                     frame:
                         style "premium_pref_card"
                         at slide_panel_right
@@ -1857,55 +2191,107 @@ screen preferences():
 
                         vbox:
                             spacing 8
-                            textbutton _("是否跳过未读对话") action Preference("skip", "toggle") style "premium_pref_button"
-                            text "[premium_pref_state_text(premium_pref_skip_unseen_enabled())]":
-                                style "premium_pref_status"
+                            button:
+                                action Preference("skip", "toggle")
+                                style "premium_pref_button"
+                                xfill True
+
+                                hbox:
+                                    xfill True
+                                    yalign 0.5
+
+                                    text _("是否跳过未读对话"):
+                                        style "premium_pref_button_text"
+
+                                    null:
+                                        xfill True
+
+                                    text "[premium_pref_check_mark(premium_pref_skip_unseen_enabled())]":
+                                        style "premium_pref_toggle_mark"
+
                             text _("开启后，没看过的对白也会被快进跳过去。") style "premium_pref_body"
 
                         vbox:
                             spacing 8
-                            textbutton _("遇到选项后是否继续快进") action Preference("after choices", "toggle") style "premium_pref_button"
-                            text "[premium_pref_state_text(premium_pref_after_choices_enabled())]":
-                                style "premium_pref_status"
+                            button:
+                                action Preference("after choices", "toggle")
+                                style "premium_pref_button"
+                                xfill True
+
+                                hbox:
+                                    xfill True
+                                    yalign 0.5
+
+                                    text _("遇到选项后是否继续快进"):
+                                        style "premium_pref_button_text"
+
+                                    null:
+                                        xfill True
+
+                                    text "[premium_pref_check_mark(premium_pref_after_choices_enabled())]":
+                                        style "premium_pref_toggle_mark"
+
                             text _("开启后，做完选项后会继续自动快进；关闭后会停下来等你看。") style "premium_pref_body"
 
             elif pref_tab == "audio":
                 vbox:
                     spacing 18
 
-                    if config.has_music:
-                        frame:
-                            style "premium_pref_card"
-                            xfill True
-                            vbox:
-                                spacing 14
-                                text _("音乐音量") style "premium_pref_title"
-                                bar value Preference("music volume") style "premium_slider"
+                    hbox:
+                        spacing premium_sx(22)
 
-                    if config.has_sound:
-                        frame:
-                            style "premium_pref_card"
-                            xfill True
-                            vbox:
-                                spacing 14
-                                text _("音效音量") style "premium_pref_title"
-                                bar value Preference("sound volume") style "premium_slider"
-                                if config.sample_sound:
-                                    textbutton _("试听音效") action Play("sound", config.sample_sound) style "premium_pref_button"
+                        if config.has_music:
+                            frame:
+                                style "premium_pref_card"
+                                xfill True
 
-                    if config.has_voice:
-                        frame:
-                            style "premium_pref_card"
-                            xfill True
-                            vbox:
-                                spacing 14
-                                text _("语音音量") style "premium_pref_title"
-                                bar value Preference("voice volume") style "premium_slider"
-                                if config.sample_voice:
-                                    textbutton _("试听语音") action Play("voice", config.sample_voice) style "premium_pref_button"
+                                vbox:
+                                    spacing 14
+                                    text _("音乐音量") style "premium_pref_title"
+                                    bar value Preference("music volume") style "premium_slider"
+
+                        if config.has_sound:
+                            frame:
+                                style "premium_pref_card"
+                                xfill True
+
+                                vbox:
+                                    spacing 14
+                                    text _("音效音量") style "premium_pref_title"
+                                    bar value Preference("sound volume") style "premium_slider"
+                                    if config.sample_sound:
+                                        textbutton _("试听音效") action Play("sound", config.sample_sound) style "premium_pref_button"
+
+                        if config.has_voice:
+                            frame:
+                                style "premium_pref_card"
+                                xfill True
+
+                                vbox:
+                                    spacing 14
+                                    text _("语音音量") style "premium_pref_title"
+                                    bar value Preference("voice volume") style "premium_slider"
+                                    if config.sample_voice:
+                                        textbutton _("试听语音") action Play("voice", config.sample_voice) style "premium_pref_button"
 
                     if config.has_music or config.has_sound or config.has_voice:
-                        textbutton _("全部静音") action Preference("all mute", "toggle") style "premium_pref_button"
+                        button:
+                            action Preference("all mute", "toggle")
+                            style "premium_pref_button"
+                            xfill True
+
+                            hbox:
+                                xfill True
+                                yalign 0.5
+
+                                text _("全部静音"):
+                                    style "premium_pref_button_text"
+
+                                null:
+                                    xfill True
+
+                                text "[premium_pref_check_mark(premium_pref_all_mute_enabled())]":
+                                    style "premium_pref_toggle_mark"
 
             else:
                 frame:
@@ -1918,9 +2304,24 @@ screen preferences():
 
                         vbox:
                             spacing 8
-                            textbutton _("场景切换时显示过渡动画") action Preference("transitions", "toggle") style "premium_pref_button"
-                            text "[premium_pref_state_text(premium_pref_transitions_enabled())]":
-                                style "premium_pref_status"
+                            button:
+                                action Preference("transitions", "toggle")
+                                style "premium_pref_button"
+                                xfill True
+
+                                hbox:
+                                    xfill True
+                                    yalign 0.5
+
+                                    text _("场景切换时显示过渡动画"):
+                                        style "premium_pref_button_text"
+
+                                    null:
+                                        xfill True
+
+                                    text "[premium_pref_check_mark(premium_pref_transitions_enabled())]":
+                                        style "premium_pref_toggle_mark"
+
                             text _("开启后，切换场景时会保留淡入淡出等过渡效果；关闭后切换会更直接。") style "premium_pref_body"
 
                         text _("更改会立即生效。") style "premium_pref_body"
@@ -2098,10 +2499,7 @@ screen cg_gallery():
                             vbox:
                                 xpos premium_sx(20)
                                 ypos premium_sy(168)
-                                spacing 2
-
-                                text title:
-                                    style "premium_gallery_title"
+                                spacing 0
 
                                 text gallery_status:
                                     style "premium_gallery_status"
@@ -2128,9 +2526,6 @@ screen cg_viewer(scene_name, title):
 
         vbox:
             spacing 14
-
-            text title:
-                style "premium_menu_title"
 
             add Transform(scene_name, fit="contain", xysize=(premium_sx(1480), premium_sy(760))):
                 xalign 0.5
@@ -2503,12 +2898,16 @@ style premium_tab_button is button:
     padding (premium_sx(20), premium_sy(12), premium_sx(20), premium_sy(12))
     background Frame("gui/button/idle_background.png", Borders(10, 10, 10, 10), tile=False)
     hover_background Frame("gui/button/hover_background.png", Borders(10, 10, 10, 10), tile=False)
+    insensitive_background Frame("gui/button/idle_background.png", Borders(10, 10, 10, 10), tile=False)
+    selected_insensitive_background Frame("gui/button/idle_background.png", Borders(10, 10, 10, 10), tile=False)
 
 style premium_tab_button_text is button_text:
     font premium_body_font
     size premium_ss(22)
     color "#111111"
     hover_color "#7A7A7A"
+    insensitive_color "#666666"
+    selected_insensitive_color "#666666"
     outlines []
 
 style premium_pref_card is default:
@@ -2552,8 +2951,50 @@ style premium_pref_button_text is button_text:
     hover_color "#7A7A7A"
     outlines []
 
+style premium_pref_toggle_mark is default:
+    font premium_symbol_font
+    size premium_ss(28)
+    color "#111111"
+    outlines []
+
 style premium_slider is bar:
     ysize premium_sy(30)
+
+style premium_story_history_backdrop_button is button:
+    xfill True
+    yfill True
+    padding (0, 0, 0, 0)
+    background Solid("#FFFFFF66")
+    hover_background Solid("#FFFFFF66")
+
+style premium_story_history_panel is default:
+    xfill True
+    yfill True
+    padding (premium_sx(36), premium_sy(30), premium_sx(28), 0)
+    background None
+
+style premium_story_history_viewport is default:
+    xfill True
+    yfill True
+
+style premium_story_history_entry is default:
+    xfill True
+    padding (premium_sx(20), premium_sy(16), premium_sx(20), premium_sy(16))
+    background None
+
+style premium_story_history_name is default:
+    font premium_name_font
+    size premium_ss(34)
+    bold False
+    color "#111111"
+    outlines []
+
+style premium_story_history_text is default:
+    font premium_body_font
+    size premium_ss(29)
+    color "#111111"
+    line_spacing premium_sy(10)
+    outlines []
 
 style premium_history_card is default:
     xfill True

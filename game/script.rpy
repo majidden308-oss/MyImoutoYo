@@ -2,11 +2,12 @@
 
 # 声明此游戏使用的角色。颜色参数可使角色姓名着色。
 
-define i = Character("莫莉")
+define i = Character("林末节")
 define d = Character("？？？")
-define m = Character("莫于")
+define m = Character("林细枝")
 define q = Character("秋香姐")
 define c = Character("春阳哥")
+define y = Character("于眠")
 
 init python:
     def safe_play(filename, channel="sound", fadein=0.0):
@@ -204,8 +205,6 @@ label start:
     "她的身影、她的声音、那句轻得仿佛随时会消散的话语，全都在耀眼的纯白中迅速远去。"
 
     "世界失去了边界。"
-
-    "而我，甚至来不及抓住那只本该伸向我的手。"
 
     window show
 

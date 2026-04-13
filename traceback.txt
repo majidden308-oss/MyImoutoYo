@@ -1,27 +1,159 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/script.rpy", line 358, in script
-    i "停，停下！呜...#￥%啊啊~~"
-ValueError: unsupported format character '?' (0x554a) at index 12
+  File "game/zz_premium_ui.rpy", line 2046, in execute
+    screen preferences():
+  File "game/zz_premium_ui.rpy", line 2046, in execute
+    screen preferences():
+  File "game/zz_premium_ui.rpy", line 2050, in execute
+    use premium_menu_shell(_("设置"), scroll="viewport"):
+  File "game/zz_premium_ui.rpy", line 1056, in execute
+    screen premium_menu_shell(title, scroll=None, yinitial=0.0, spacing=22):
+  File "game/zz_premium_ui.rpy", line 1056, in execute
+    screen premium_menu_shell(title, scroll=None, yinitial=0.0, spacing=22):
+  File "game/zz_premium_ui.rpy", line 1091, in execute
+    frame:
+  File "game/zz_premium_ui.rpy", line 1095, in execute
+    vbox:
+  File "game/zz_premium_ui.rpy", line 1112, in execute
+    if scroll == "viewport":
+  File "game/zz_premium_ui.rpy", line 1113, in execute
+    viewport:
+  File "game/zz_premium_ui.rpy", line 1122, in execute
+    vbox:
+  File "game/zz_premium_ui.rpy", line 1124, in execute
+    transclude
+  File "game/zz_premium_ui.rpy", line 2050, in execute
+    use premium_menu_shell(_("设置"), scroll="viewport"):
+  File "game/zz_premium_ui.rpy", line 2051, in execute
+    vbox:
+  File "game/zz_premium_ui.rpy", line 2063, in execute
+    if pref_tab == "display":
+  File "game/zz_premium_ui.rpy", line 2145, in execute
+    vbox:
+  File "game/zz_premium_ui.rpy", line 2179, in execute
+    if config.has_music or config.has_sound or config.has_voice:
+  File "game/zz_premium_ui.rpy", line 2180, in execute
+    button:
+  File "game/zz_premium_ui.rpy", line 2185, in execute
+    hbox:
+  File "game/zz_premium_ui.rpy", line 2195, in execute
+    text "[premium_pref_check_mark(_preferences.all_mute)]":
+AttributeError: 'Preferences' object has no attribute 'all_mute'. Did you mean: 'get_mute'?
 
 -- Full Traceback ------------------------------------------------------------
 
 Traceback (most recent call last):
-  File "game/script.rpy", line 358, in script
-    i "停，停下！呜...#￥%啊啊~~"
-  File "renpy/ast.py", line 2915, in execute
-    Say.execute(self)
-    ~~~~~~~~~~~^^^^^^
-  File "renpy/ast.py", line 991, in execute
-    renpy.exports.say(who, what, *args, **kwargs)
-    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "renpy/exports/sayexports.py", line 118, in say
-    what = what % tag_quoting_dict
-           ~~~~~^~~~~~~~~~~~~~~~~~
-ValueError: unsupported format character '?' (0x554a) at index 12
+  File "renpy/common/00gamemenu.rpy", line 174, in script
+    $ ui.interact()
+  File "renpy/ast.py", line 1187, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1260, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/common/00gamemenu.rpy", line 174, in <module>
+    $ ui.interact()
+      ~~~~~~~~~~~^^
+  File "renpy/ui.py", line 304, in interact
+    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/display/core.py", line 2219, in interact
+    repeat, rv = self.interact_core(
+                 ~~~~~~~~~~~~~~~~~~^
+        preloads=preloads,
+        ^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )  # type: ignore
+    ^                
+  File "renpy/display/core.py", line 2757, in interact_core
+    root_widget.visit_all(lambda d: d.per_interact())
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 432, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 432, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 432, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "renpy/display/screen.py", line 503, in visit_all
+    callback(self)
+    ~~~~~~~~^^^^^^
+  File "renpy/display/core.py", line 2757, in <lambda>
+    root_widget.visit_all(lambda d: d.per_interact())
+                                    ~~~~~~~~~~~~~~^^ 
+  File "renpy/display/screen.py", line 514, in per_interact
+    self.update()
+    ~~~~~~~~~~~^^
+  File "renpy/display/screen.py", line 715, in update
+    self.screen.function(**self.scope)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "game/zz_premium_ui.rpy", line 2046, in execute
+    screen preferences():
+  File "game/zz_premium_ui.rpy", line 2046, in execute
+    screen preferences():
+  File "game/zz_premium_ui.rpy", line 2050, in execute
+    use premium_menu_shell(_("设置"), scroll="viewport"):
+  File "game/zz_premium_ui.rpy", line 1056, in execute
+    screen premium_menu_shell(title, scroll=None, yinitial=0.0, spacing=22):
+  File "game/zz_premium_ui.rpy", line 1056, in execute
+    screen premium_menu_shell(title, scroll=None, yinitial=0.0, spacing=22):
+  File "game/zz_premium_ui.rpy", line 1091, in execute
+    frame:
+  File "game/zz_premium_ui.rpy", line 1095, in execute
+    vbox:
+  File "game/zz_premium_ui.rpy", line 1112, in execute
+    if scroll == "viewport":
+  File "game/zz_premium_ui.rpy", line 1113, in execute
+    viewport:
+  File "game/zz_premium_ui.rpy", line 1122, in execute
+    vbox:
+  File "game/zz_premium_ui.rpy", line 1124, in execute
+    transclude
+  File "game/zz_premium_ui.rpy", line 2050, in execute
+    use premium_menu_shell(_("设置"), scroll="viewport"):
+  File "game/zz_premium_ui.rpy", line 2051, in execute
+    vbox:
+  File "game/zz_premium_ui.rpy", line 2063, in execute
+    if pref_tab == "display":
+  File "game/zz_premium_ui.rpy", line 2145, in execute
+    vbox:
+  File "game/zz_premium_ui.rpy", line 2179, in execute
+    if config.has_music or config.has_sound or config.has_voice:
+  File "game/zz_premium_ui.rpy", line 2180, in execute
+    button:
+  File "game/zz_premium_ui.rpy", line 2185, in execute
+    hbox:
+  File "game/zz_premium_ui.rpy", line 2195, in execute
+    text "[premium_pref_check_mark(_preferences.all_mute)]":
+  File "renpy/text/text.py", line 2195, in __init__
+    self.set_text(text, scope, substitute)  # type: ignore
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^                
+  File "renpy/text/text.py", line 2329, in set_text
+    i, did_sub = renpy.substitutions.substitute(i, scope, substitute)  # type: ignore
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^                
+  File "renpy/substitutions.py", line 355, in substitute
+    s = interpolate(s, variables)  # type: ignore
+        ~~~~~~~~~~~^^^^^^^^^^^^^^                
+  File "renpy/substitutions.py", line 89, in interpolate
+    raise e
+  File "renpy/substitutions.py", line 81, in interpolate
+    value = renpy.python.py_eval(code, {}, scope)
+            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1292, in py_eval
+    return py_eval_bytecode(code, globals, locals)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1285, in py_eval_bytecode
+    return eval(bytecode, globals, locals)
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<none>", line 1, in <module>
+AttributeError: 'Preferences' object has no attribute 'all_mute'. Did you mean: 'get_mute'?
 
 Windows-11-10.0.26200-SP0 AMD64
 Ren'Py 8.4.1.25072401
 my imouto yo v0.1
-Sat Apr 11 12:40:00 2026
+Mon Apr 13 20:57:37 2026
